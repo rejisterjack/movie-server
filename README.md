@@ -1,98 +1,313 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🎬 Movie Database API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A comprehensive REST API for managing movie databases with JWT authentication, built with NestJS, TypeORM, and PostgreSQL. Features Cloudinary integration for image uploads and complete CRUD operations.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## ✨ Features
 
-## Description
+- 🔐 **JWT Authentication** - Secure user registration and login
+- 🎭 **Movie Management** - Full CRUD operations for movies
+- 📸 **Image Upload** - Cloudinary integration for poster uploads
+- 📄 **Pagination** - Efficient data retrieval with pagination
+- 📚 **API Documentation** - Complete Swagger/OpenAPI documentation
+- ✅ **Input Validation** - Comprehensive data validation with class-validator
+- 🗄️ **PostgreSQL Database** - Robust data persistence with TypeORM
+- 🔒 **Security** - bcrypt password hashing, SQL injection protection
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 🛠️ Tech Stack
 
-## Project setup
+- **Framework**: [NestJS](https://nestjs.com/) - Progressive Node.js framework
+- **Database**: [PostgreSQL](https://www.postgresql.org/) with [TypeORM](https://typeorm.io/)
+- **Authentication**: [JWT](https://jwt.io/) with [Passport](http://www.passportjs.org/)
+- **Image Storage**: [Cloudinary](https://cloudinary.com/) CDN
+- **Validation**: [class-validator](https://github.com/typestack/class-validator)
+- **Documentation**: [Swagger/OpenAPI](https://swagger.io/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
 
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Node.js (v18 or higher)
+- PostgreSQL database
+- Cloudinary account (for image uploads)
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/rejisterjack/movie-server.git
+   cd movie-server
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Environment Setup**
+   ```bash
+   cp .env.example .env  # If available, or create .env file
+   ```
+
+   Configure your `.env` file:
+   ```env
+   # Database
+   DATABASE_URL=postgresql://username:password@localhost:5432/movie_db
+
+   # JWT
+   JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+   JWT_EXPIRES_IN=3600
+
+   # Cloudinary (for image uploads)
+   CLOUDINARY_CLOUD_NAME=your-cloud-name
+   CLOUDINARY_API_KEY=your-api-key
+   CLOUDINARY_API_SECRET=your-api-secret
+
+   # App
+   PORT=3001
+   NODE_ENV=development
+   ```
+
+4. **Database Setup**
+   ```bash
+   # Make sure PostgreSQL is running
+   # The application will automatically create tables with TypeORM
+   ```
+
+5. **Run the application**
+   ```bash
+   # Development mode with hot reload
+   npm run start:dev
+
+   # Production build
+   npm run build
+   npm run start:prod
+   ```
+
+The API will be available at `http://localhost:3001`
+Swagger documentation at `http://localhost:3001/api`
+
+## 📋 API Endpoints
+
+### Authentication
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| POST | `/auth/register` | Register new user | ❌ |
+| POST | `/auth/login` | User login | ❌ |
+| POST | `/auth/profile` | Get user profile | ✅ |
+
+### Movies
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| POST | `/movies` | Create new movie | ✅ |
+| GET | `/movies` | Get all movies (paginated) | ✅ |
+| GET | `/movies/:id` | Get movie by ID | ✅ |
+| PATCH | `/movies/:id` | Update movie | ✅ |
+| DELETE | `/movies/:id` | Delete movie | ✅ |
+
+### Image Upload
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| POST | `/upload/image` | Upload image to Cloudinary | ✅ |
+
+## 🔧 API Usage Examples
+
+### 1. User Registration
 ```bash
-$ npm install
+curl -X POST http://localhost:3001/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@example.com",
+    "password": "password123"
+  }'
 ```
 
-## Compile and run the project
-
+### 2. User Login
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+curl -X POST http://localhost:3001/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@example.com",
+    "password": "password123"
+  }'
+# Returns: {"access_token": "jwt-token-here"}
 ```
 
-## Run tests
-
+### 3. Upload Image
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+curl -X POST http://localhost:3001/upload/image \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -F "file=@/path/to/image.jpg"
+# Returns: {"url": "https://cloudinary-url"}
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
+### 4. Create Movie
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+curl -X POST http://localhost:3001/movies \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Inception",
+    "publishingYear": 2010,
+    "poster": "https://cloudinary-url-here"
+  }'
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### 5. Get Movies (Paginated)
+```bash
+curl -X GET "http://localhost:3001/movies?page=1&limit=10" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
 
-## Resources
+## 📊 Data Models
 
-Check out a few resources that may come in handy when working with NestJS:
+### User
+```typescript
+{
+  id: string;           // UUID
+  email: string;        // Unique email
+  password: string;     // Hashed password (excluded from responses)
+  isActive: boolean;    // Account status
+  createdAt: Date;      // Creation timestamp
+  updatedAt: Date;      // Update timestamp
+}
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### Movie
+```typescript
+{
+  id: string;           // UUID
+  title: string;        // Movie title
+  publishingYear: number; // Release year (1888-2026)
+  poster: string;       // Cloudinary image URL
+  createdAt: Date;      // Creation timestamp
+  updatedAt: Date;      // Update timestamp
+}
+```
 
-## Support
+## 🧪 Testing
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### Manual Testing with Postman
+1. Import the provided Postman collection
+2. Set environment variable: `baseUrl = http://localhost:3001`
+3. Run requests in order: Register → Login → Upload → CRUD operations
 
-## Stay in touch
+### Automated Testing
+```bash
+# Run unit tests
+npm run test
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+# Run e2e tests
+npm run test:e2e
 
-## License
+# Test coverage
+npm run test:cov
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+## 🔒 Security Features
+
+- **Password Hashing**: bcrypt with salt rounds
+- **JWT Tokens**: Stateless authentication with expiration
+- **Input Validation**: Comprehensive request validation
+- **SQL Injection Protection**: Parameterized queries
+- **CORS Configuration**: Proper cross-origin handling
+- **File Upload Security**: Type and size validation
+
+## 📸 Image Upload Process
+
+1. **Upload Image**: Send image file to `/upload/image` endpoint
+2. **Cloudinary Processing**: Image uploaded to Cloudinary with optimization
+3. **URL Generation**: Secure Cloudinary URL returned
+4. **Movie Creation**: Use returned URL when creating/updating movies
+
+**Benefits:**
+- ✅ No server storage costs
+- ✅ Automatic image optimization
+- ✅ Global CDN delivery
+- ✅ Professional image processing
+
+## 🚀 Deployment
+
+### Environment Variables for Production
+```env
+NODE_ENV=production
+DATABASE_URL=postgresql://user:pass@host:5432/db
+JWT_SECRET=your-production-secret-key
+CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_API_KEY=your-api-key
+CLOUDINARY_API_SECRET=your-api-secret
+```
+
+### Docker Deployment (Optional)
+```dockerfile
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY . .
+RUN npm run build
+EXPOSE 3001
+CMD ["npm", "run", "start:prod"]
+```
+
+### AWS Deployment
+- **EC2**: Host the Node.js application
+- **RDS**: PostgreSQL database
+- **CloudFront + S3**: Static file serving (if needed)
+- **Cloudinary**: Image hosting and CDN
+
+## 📈 Performance Optimizations
+
+- **Database Indexing**: Optimized queries with TypeORM
+- **Pagination**: Efficient data retrieval
+- **CDN Integration**: Fast global image delivery
+- **Connection Pooling**: PostgreSQL connection reuse
+- **Caching Ready**: Architecture supports Redis integration
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+1. **Database Connection Failed**
+   ```bash
+   # Check PostgreSQL is running
+   sudo systemctl status postgresql
+
+   # Verify DATABASE_URL in .env
+   ```
+
+2. **Cloudinary Upload Failed**
+   ```bash
+   # Check Cloudinary credentials in .env
+   # Verify account has upload permissions
+   ```
+
+3. **JWT Token Invalid**
+   ```bash
+   # Check JWT_SECRET in .env
+   # Verify token hasn't expired
+   ```
+
+### Debug Mode
+```bash
+# Enable debug logging
+NODE_ENV=development DEBUG=* npm run start:dev
+```
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- [NestJS](https://nestjs.com/) - The progressive Node.js framework
+- [TypeORM](https://typeorm.io/) - Amazing ORM for TypeScript
+- [Cloudinary](https://cloudinary.com/) - Image management platform
+- [PostgreSQL](https://www.postgresql.org/) - Advanced open source database
+
+---
+
+**Happy coding! 🎬✨**
