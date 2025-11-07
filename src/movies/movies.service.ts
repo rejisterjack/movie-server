@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Movie } from './movie.entity';
@@ -14,20 +14,24 @@ export class MoviesService {
 
   async create(
     createMovieDto: CreateMovieDto,
+    userId: string,
     posterPath?: string,
   ): Promise<Movie> {
     const movie = this.movieRepository.create({
       ...createMovieDto,
+      userId,
       poster: posterPath,
     });
     return this.movieRepository.save(movie);
   }
 
   async findAll(
+    userId: string,
     page: number = 1,
     limit: number = 10,
   ): Promise<{ data: Movie[]; total: number; page: number; limit: number }> {
     const [data, total] = await this.movieRepository.findAndCount({
+      where: { userId },
       skip: (page - 1) * limit,
       take: limit,
       order: { createdAt: 'DESC' },
@@ -41,21 +45,25 @@ export class MoviesService {
     };
   }
 
-  async findOne(id: string): Promise<Movie> {
+  async findOne(id: string, userId: string): Promise<Movie> {
     const movie = await this.movieRepository.findOne({ where: { id } });
     if (!movie) {
       throw new NotFoundException(`Movie with ID ${id} not found`);
+    }
+    if (movie.userId !== userId) {
+      throw new ForbiddenException('You can only access your own movies');
     }
     return movie;
   }
 
   async update(
     id: string,
+    userId: string,
     updateMovieDto: UpdateMovieDto,
     posterPath?: string,
   ): Promise<Movie> {
-    // Verify movie exists
-    await this.findOne(id);
+    // Verify movie exists and user owns it
+    await this.findOne(id, userId);
 
     // If posterPath is provided, update it; otherwise keep existing
     const updateData = {
@@ -64,11 +72,11 @@ export class MoviesService {
     };
 
     await this.movieRepository.update(id, updateData);
-    return this.findOne(id);
+    return this.findOne(id, userId);
   }
 
-  async remove(id: string): Promise<void> {
-    const movie = await this.findOne(id);
+  async remove(id: string, userId: string): Promise<void> {
+    const movie = await this.findOne(id, userId);
     await this.movieRepository.remove(movie);
   }
 }

@@ -10,7 +10,9 @@ import {
   Query,
   ParseIntPipe,
   DefaultValuePipe,
+  Req,
 } from '@nestjs/common';
+import type { Request } from 'express';
 import {
   ApiTags,
   ApiOperation,
@@ -39,8 +41,9 @@ export class MoviesController {
   })
   @ApiResponse({ status: 400, description: 'Bad request' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async create(@Body() createMovieDto: CreateMovieDto) {
-    return this.moviesService.create(createMovieDto, createMovieDto.poster);
+  async create(@Body() createMovieDto: CreateMovieDto, @Req() req: Request) {
+    const userId = (req as any).user.userId;
+    return this.moviesService.create(createMovieDto, userId, createMovieDto.poster);
   }
 
   @Get()
@@ -55,8 +58,10 @@ export class MoviesController {
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @Req() req: Request,
   ) {
-    return this.moviesService.findAll(page, limit);
+    const userId = (req as any).user.userId;
+    return this.moviesService.findAll(userId, page, limit);
   }
 
   @Get(':id')
@@ -68,8 +73,9 @@ export class MoviesController {
   })
   @ApiResponse({ status: 404, description: 'Movie not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async findOne(@Param('id') id: string) {
-    return this.moviesService.findOne(id);
+  async findOne(@Param('id') id: string, @Req() req: Request) {
+    const userId = (req as any).user.userId;
+    return this.moviesService.findOne(id, userId);
   }
 
   @Patch(':id')
@@ -84,8 +90,10 @@ export class MoviesController {
   async update(
     @Param('id') id: string,
     @Body() updateMovieDto: UpdateMovieDto,
+    @Req() req: Request,
   ) {
-    return this.moviesService.update(id, updateMovieDto, updateMovieDto.poster);
+    const userId = (req as any).user.userId;
+    return this.moviesService.update(id, userId, updateMovieDto, updateMovieDto.poster);
   }
 
   @Delete(':id')
@@ -97,8 +105,9 @@ export class MoviesController {
   })
   @ApiResponse({ status: 404, description: 'Movie not found' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async remove(@Param('id') id: string) {
-    await this.moviesService.remove(id);
+  async remove(@Param('id') id: string, @Req() req: Request) {
+    const userId = (req as any).user.userId;
+    await this.moviesService.remove(id, userId);
     return { message: 'Movie deleted successfully' };
   }
 }
